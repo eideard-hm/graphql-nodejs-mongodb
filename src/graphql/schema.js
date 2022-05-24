@@ -1,7 +1,7 @@
 import { GraphQLObjectType, GraphQLSchema } from 'graphql'
 
 import { user, users } from './queries'
-import { login, register } from './mutations'
+import { createPost, login, register } from './mutations'
 
 /**
  * Define Queries
@@ -22,6 +22,7 @@ const MutationType = new GraphQLObjectType({
   name: 'MutationType',
   description: 'Mutations',
   fields: {
+    createPost,
     login,
     register
   }

@@ -3,13 +3,15 @@ import cors from 'cors'
 import { graphqlHTTP } from 'express-graphql'
 
 import schema from './graphql/schema'
+import { authenticate } from './middlewares/auth'
 
 const app = express()
 
+// define middlewares
+app.use(authenticate)
+
 // define cors
 app.use(cors())
-
-// define middlewares
 
 // define entrypoints
 app.get('/', (_, res) => res.send({ msg: 'Welcome. Go to /graphql' }))

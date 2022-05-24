@@ -1,8 +1,9 @@
 import { GraphQLNonNull, GraphQLString } from 'graphql'
 
-import { User } from '../models'
+import { Post, User } from '../models'
 import { generateJwtToken } from '../utils/auth'
 import { comparePassword, encryptPassword } from '../utils/bcrypt'
+import { PostType } from './typesDef'
 
 /**
  * Mutation create new User
@@ -57,4 +58,18 @@ export const login = {
       displayName: user.displayName
     })
   }
+}
+
+/**
+ * Mutation for create post
+ */
+export const createPost = {
+  type: PostType,
+  description: 'Create new post',
+  args: {
+    title: { type: new GraphQLNonNull(GraphQLString) },
+    body: { type: new GraphQLNonNull(GraphQLString) }
+  },
+  resolve: async (_, post, { verifiedUser }) =>
+    await Post.create({ ...post, userId: verifiedUser._id })
 }
