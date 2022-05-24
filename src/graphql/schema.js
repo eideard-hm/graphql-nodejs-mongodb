@@ -1,5 +1,7 @@
 import { GraphQLObjectType, GraphQLSchema } from 'graphql'
-import { helloWorld } from './queries'
+
+import { user, users } from './queries'
+import { login, register } from './mutations'
 
 /**
  * Define Queries
@@ -8,7 +10,8 @@ const QueryType = new GraphQLObjectType({
   name: 'QueryType',
   description: 'Queries',
   fields: {
-    helloWorld
+    user,
+    users
   }
 })
 
@@ -18,7 +21,10 @@ const QueryType = new GraphQLObjectType({
 const MutationType = new GraphQLObjectType({
   name: 'MutationType',
   description: 'Mutations',
-  fields: {}
+  fields: {
+    login,
+    register
+  }
 })
 
 /**
@@ -26,6 +32,6 @@ const MutationType = new GraphQLObjectType({
  * Un *Schema* es un objeto que tiene listada todas las *queries* y *mutations* que podemos hacer
  */
 export default new GraphQLSchema({
-  query: QueryType
-  // mutation: MutationType
+  query: QueryType,
+  mutation: MutationType
 })
