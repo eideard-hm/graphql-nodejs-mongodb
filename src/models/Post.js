@@ -4,7 +4,8 @@ const PostSchema = new Schema(
   {
     userId: {
       type: Schema.Types.ObjectId,
-      ref: 'Users'
+      ref: 'User',
+      required: true
     },
     title: {
       type: String,
@@ -21,4 +22,4 @@ const PostSchema = new Schema(
   }
 )
 
-export default model('Posts', PostSchema)
+export default model('Post', PostSchema)

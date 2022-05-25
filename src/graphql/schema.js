@@ -1,7 +1,14 @@
 import { GraphQLObjectType, GraphQLSchema } from 'graphql'
 
-import { user, users } from './queries'
-import { createPost, login, register } from './mutations'
+import { comment, comments, user, users, post, posts } from './queries'
+import {
+  addComment,
+  createPost,
+  deletePost,
+  updatePost,
+  login,
+  register
+} from './mutations'
 
 /**
  * Define Queries
@@ -10,8 +17,14 @@ const QueryType = new GraphQLObjectType({
   name: 'QueryType',
   description: 'Queries',
   fields: {
+    comment,
+    comments,
+
     user,
-    users
+    users,
+
+    post,
+    posts
   }
 })
 
@@ -22,7 +35,12 @@ const MutationType = new GraphQLObjectType({
   name: 'MutationType',
   description: 'Mutations',
   fields: {
+    addComment,
+
     createPost,
+    updatePost,
+    deletePost,
+
     login,
     register
   }

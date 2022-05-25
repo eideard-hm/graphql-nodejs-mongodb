@@ -30,4 +30,4 @@ const UserSchema = new Schema(
   }
 )
 
-export default model('Users', UserSchema)
+export default model('User', UserSchema)

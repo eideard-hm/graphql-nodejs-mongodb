@@ -1,9 +1,9 @@
-import { GraphQLNonNull, GraphQLString } from 'graphql'
+import { GraphQLError, GraphQLID, GraphQLNonNull, GraphQLString } from 'graphql'
 
-import { Post, User } from '../models'
+import { Comment, Post, User } from '../models'
 import { generateJwtToken } from '../utils/auth'
 import { comparePassword, encryptPassword } from '../utils/bcrypt'
-import { PostType } from './typesDef'
+import { CommentType, PostType } from './typesDef'
 
 /**
  * Mutation create new User
@@ -72,4 +72,76 @@ export const createPost = {
   },
   resolve: async (_, post, { verifiedUser }) =>
     await Post.create({ ...post, userId: verifiedUser._id })
+}
+
+/**
+ * Mutation for update post
+ */
+export const updatePost = {
+  type: PostType,
+  description: 'Update post',
+  args: {
+    id: { type: new GraphQLNonNull(GraphQLID) },
+    title: { type: GraphQLString },
+    body: { type: GraphQLString }
+  },
+  resolve: async (_, post, { verifiedUser }) => {
+    if (!verifiedUser) throw new Error('Unauthorizated')
+
+    return await Post.findOneAndUpdate(
+      {
+        _id: post.id,
+        userId: verifiedUser._id
+      },
+      post,
+      {
+        new: true,
+        timestamps: true,
+        runValidators: true
+      }
+    )
+  }
+}
+
+/**
+ * Mutation for delete post
+ */
+export const deletePost = {
+  type: GraphQLString,
+  description: 'Delete one post',
+  args: {
+    id: { type: new GraphQLNonNull(GraphQLID) }
+  },
+  resolve: async (_, { id }, { verifiedUser }) => {
+    if (!verifiedUser) throw new Error('Unauthorizated')
+    const postDeleted = await Post.findOneAndDelete(
+      {
+        _id: id,
+        userId: verifiedUser._id
+      },
+      {
+        new: true,
+        runValidators: true
+      }
+    )
+    if (!postDeleted) throw new Error(`The post with Id: ${id} not found!`)
+
+    return `The post ${postDeleted.title} has been successfully deleted!`
+  }
+}
+
+/**
+ * Mutation for create comment
+ */
+export const addComment = {
+  type: CommentType,
+  description: 'Add new comment',
+  args: {
+    comment: { type: new GraphQLNonNull(GraphQLString) },
+    postId: { type: new GraphQLNonNull(GraphQLID) }
+  },
+  resolve: async (_, comment, { verifiedUser }) => {
+    if (!verifiedUser) new GraphQLError('Unauthorizated')
+    return await Comment.create({ ...comment, userId: verifiedUser._id })
+  }
 }

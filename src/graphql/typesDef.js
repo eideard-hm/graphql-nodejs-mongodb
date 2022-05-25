@@ -1,4 +1,10 @@
-import { GraphQLID, GraphQLObjectType, GraphQLString } from 'graphql'
+import {
+  GraphQLID,
+  GraphQLList,
+  GraphQLObjectType,
+  GraphQLString
+} from 'graphql'
+import { Post, User, Comment } from '../models'
 
 /**
  * Custom type for User
@@ -22,10 +28,39 @@ export const UserType = new GraphQLObjectType({
 export const PostType = new GraphQLObjectType({
   name: 'PostType',
   description: 'The post type',
+  fields: () => ({
+    id: { type: GraphQLID },
+    title: { type: GraphQLString },
+    body: { type: GraphQLString },
+    createdAt: { type: GraphQLString },
+    updatedAt: { type: GraphQLString },
+    user: {
+      type: UserType,
+      resolve: async root => await User.findById(root.userId)
+    },
+    comments: {
+      type: new GraphQLList(CommentType),
+      resolve: async root => await Comment.find({ postId: root.id })
+    }
+  })
+})
+
+/**
+ * Custom type for Comment
+ */
+export const CommentType = new GraphQLObjectType({
+  name: 'CommentType',
+  description: 'The comment types',
   fields: {
     id: { type: GraphQLID },
-    userId: { type: GraphQLID },
-    title: { type: GraphQLString },
-    body: { type: GraphQLString }
+    comment: { type: GraphQLString },
+    user: {
+      type: UserType,
+      resolve: async root => await User.findById(root.userId)
+    },
+    post: {
+      type: PostType,
+      resolve: async root => await Post.findById(root.postId)
+    }
   }
 })
