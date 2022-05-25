@@ -4,6 +4,8 @@ import { comment, comments, user, users, post, posts } from './queries'
 import {
   addComment,
   createPost,
+  deleteComment,
+  updateComment,
   deletePost,
   updatePost,
   login,
@@ -36,6 +38,8 @@ const MutationType = new GraphQLObjectType({
   description: 'Mutations',
   fields: {
     addComment,
+    deleteComment,
+    updateComment,
 
     createPost,
     updatePost,

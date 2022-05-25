@@ -145,3 +145,50 @@ export const addComment = {
     return await Comment.create({ ...comment, userId: verifiedUser._id })
   }
 }
+
+/**
+ * Mutation for update comment
+ */
+export const updateComment = {
+  type: CommentType,
+  description: 'Update comment',
+  args: {
+    id: { type: new GraphQLNonNull(GraphQLID) },
+    comment: { type: GraphQLString }
+  },
+  resolve: async (_, comment, { verifiedUser }) => {
+    if (!verifiedUser) new GraphQLError('Unauthorizated')
+    return await Comment.findOneAndUpdate(
+      {
+        _id: comment.id,
+        userId: verifiedUser._id
+      },
+      comment,
+      {
+        new: true,
+        timestamps: true,
+        runValidators: true
+      }
+    )
+  }
+}
+
+/**
+ * Delete comment
+ */
+export const deleteComment = {
+  type: GraphQLString,
+  description: 'Delete comment',
+  args: {
+    id: { type: new GraphQLNonNull(GraphQLID) }
+  },
+  resolve: async (_, { id }, { verifiedUser }) => {
+    if (!verifiedUser) new GraphQLError('Unauthorizated')
+    const commentDeleted = await Comment.findOneAndDelete({
+      _id: id,
+      userId: verifiedUser._id
+    })
+    if (!commentDeleted) new GraphQLError(`The comment${id} not found`)
+    return `The comment ${id} has been successfully deleted`
+  }
+}
